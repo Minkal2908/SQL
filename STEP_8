@@ -1,0 +1,70 @@
+CREATE TABLE student (
+  rollno INT PRIMARY KEY,
+  name VARCHAR(50),
+  marks INT NOT NULL,
+  grade VARCHAR(1),
+  city VARCHAR(20)
+);
+
+INSERT INTO student
+VALUES
+(101, "anil", 78, "C", "Pune"),
+(102, "bhumika", 93, "A", "Mumbai"),
+(103, "chetan", 85, "B", "Mumbai"),
+(104, "dhruv", 96, "A", "Delhi"),
+(105, "emanuel", 12, "F", "Delhi"),
+(106, "farah", 82, "B", "Delhi"),
+(107, "anil", 80, "C", "Pune");
+
+SELECT * FROM student;
+
+ALTER TABLE student
+ADD COLUMN age INT NOT NULL DEFAULT 19; -- COLUMN nhi bhi likh sakte hain 
+
+SELECT * FROM student;
+
+ALTER TABLE student
+DROP COLUMN age; -- COLUMN nhi bhi likh sakte hain 
+
+SELECT * FROM student;
+
+ALTER TABLE student
+RENAME TO employee; -- student table renamed to employee table
+
+-- we can't see this as by printing the table but we can feel this as we move 
+-- forward when we have to change SQL query accordingly
+
+-- SELECT * FROM student; -- Table 'sandbox_db.student' doesn't exist
+
+ALTER TABLE employee
+CHANGE COLUMN name student_name VARCHAR(100); -- data type to same rakha but constraint change karke 100 kar diya (100 or 50 specifies the maximum number of characters (not bits))
+
+SELECT * FROM employee;
+
+-- ALTER TABLE employee
+-- MODIFY marks FLOAT DEFAULT 0.0;
+
+-- INSERT INTO employee VALUES(108, 'minkal', 'U', 'Patna'); -- Error: Column count doesn't match
+
+-- SELECT * FROM employee;
+
+-- WAY - 1 for resolving the above error 
+ALTER TABLE employee
+MODIFY marks FLOAT DEFAULT 0.0;
+
+INSERT INTO employee 
+(rollno, student_name, grade, city)
+VALUES
+(108, 'minkal', 'U', 'Patna'); 
+
+SELECT * FROM employee;
+
+-- WAY - 2 for resolving above error 
+ALTER TABLE employee
+MODIFY marks FLOAT DEFAULT 0.0;
+
+INSERT INTO employee VALUES(109, 'minkal', DEFAULT, 'U', 'Patna'); 
+
+SELECT * FROM employee;
+
+-- TRUNCATE TABLE employee; -- khali kar dega pura table mat chalana isko 
