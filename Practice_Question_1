@@ -1,0 +1,196 @@
+-- Question 1
+-- Schema Name: movie_streaming
+
+-- The movie_streaming database contains the following 6 tables:
+
+-- 1. movies
+-- Column Name   | Type
+-- ------------- | -------------
+-- movie_id      | INT
+-- movie_name    | VARCHAR(100)
+-- genre         | VARCHAR(50)
+-- release_year  | INT
+-- language      | VARCHAR(30)
+
+-- 2. directors
+-- Column Name   | Type
+-- ------------- | -------------
+-- director_id   | INT
+-- director_name | VARCHAR(100)
+-- country       | VARCHAR(50)
+
+-- 3. movie_directors
+-- Column Name   | Type
+-- ------------- | -------------
+-- movie_id      | INT
+-- director_id   | INT
+
+-- 4. users
+-- Column Name   | Type
+-- ------------- | -------------
+-- user_id       | INT
+-- user_name     | VARCHAR(100)
+-- country       | VARCHAR(50)
+-- age           | INT
+
+-- 5. watch_history
+-- Column Name   | Type
+-- ------------- | -------------
+-- watch_id      | INT
+-- user_id       | INT
+-- movie_id      | INT
+-- watch_date    | DATE
+-- watch_minutes | INT
+
+-- 6. ratings
+-- Column Name   | Type
+-- ------------- | -------------
+-- rating_id     | INT
+-- user_id       | INT
+-- movie_id      | INT
+-- rating        | DECIMAL(2,1)
+
+-- Question:
+-- Write an SQL query to display the movie name, genre, user name, and rating for movies watched by users where:
+-- - The movie's genre is Action
+-- - The user's age is greater than 25
+-- - The rating is 4.0 or higher
+-- - The movie was watched for more than 60 minutes
+
+-- The result should contain only movies satisfying all the conditions.
+
+-- Expected Output Columns:
+-- movie_name | genre | user_name | rating
+
+
+CREATE TABLE movies (
+  movie_id INT PRIMARY KEY,
+  movie_name VARCHAR(100),
+  genre VARCHAR(50),
+  release_year INT,
+  language VARCHAR(30)
+);
+
+CREATE TABLE users (
+  user_id INT PRIMARY KEY,
+  user_name VARCHAR(100),
+  country VARCHAR(50),
+  age INT
+);
+
+CREATE TABLE watch_history (
+  watch_id INT PRIMARY KEY,
+  user_id INT,
+  movie_id INT,
+  watch_date DATE,
+  watch_minutes INT,
+  FOREIGN KEY (user_id) REFERENCES users(user_id),
+  FOREIGN KEY (movie_id) REFERENCES movies(movie_id)
+);
+
+CREATE TABLE ratings (
+  rating_id INT PRIMARY KEY,
+  user_id INT,
+  movie_id INT,
+  rating DECIMAL(2,1),
+  FOREIGN KEY (user_id) REFERENCES users(user_id),
+  FOREIGN KEY (movie_id) REFERENCES movies(movie_id)
+);
+
+CREATE TABLE directors (
+  director_id INT PRIMARY KEY,
+  director_name VARCHAR(100),
+  country VARCHAR(50)
+);
+
+CREATE TABLE movie_directors (
+  movie_id INT,
+  director_id INT,
+  PRIMARY KEY (movie_id, director_id),
+  FOREIGN KEY (movie_id) REFERENCES movies(movie_id),
+  FOREIGN KEY (director_id) REFERENCES directors(director_id)
+);
+
+INSERT INTO movies 
+(movie_id, movie_name, genre, release_year, language) 
+VALUES
+(1, 'Mad Max: Fury Road', 'Action', 2015, 'English'),
+(2, 'The Dark Knight', 'Action', 2008, 'English'),
+(3, 'John Wick', 'Action', 2014, 'English'),
+(4, 'Superbad', 'Comedy', 2007, 'English'),
+(5, 'Interstellar', 'Sci-Fi', 2014, 'English');
+
+INSERT INTO users 
+(user_id, user_name, country, age) 
+VALUES
+(101, 'Rahul Sharma', 'India', 28),     
+(102, 'Priya Singh', 'India', 22),      
+(103, 'Amit Verma', 'USA', 32),        
+(104, 'Sneha Patel', 'UK', 29);       
+
+INSERT INTO watch_history 
+(watch_id, user_id, movie_id, watch_date, watch_minutes) 
+VALUES
+(1, 101, 1, '2026-01-10', 120), 
+(2, 101, 4, '2026-01-12', 90),   
+(3, 102, 2, '2026-01-15', 150),  
+(4, 103, 2, '2026-01-18', 140),  
+(5, 104, 3, '2026-01-20', 45);   
+
+INSERT INTO ratings 
+(rating_id, user_id, movie_id, rating) 
+VALUES
+(1, 101, 1, 4.5),  
+(2, 101, 4, 4.2),  
+(3, 102, 2, 4.8),  
+(4, 103, 2, 3.5),  
+(5, 104, 3, 4.9); 
+
+INSERT INTO directors 
+(director_id, director_name, country) 
+VALUES
+(201, 'George Miller', 'Australia'),
+(202, 'Christopher Nolan', 'UK'),
+(203, 'Chad Stahelski', 'USA'),
+(204, 'Greg Mottola', 'USA');
+
+INSERT INTO movie_directors 
+(movie_id, director_id) 
+VALUES
+(1, 201),
+(2, 202), 
+(3, 203), 
+(4, 204), 
+(5, 202); 
+
+SELECT DISTINCT m.movie_name, m.genre, u.user_name, r.rating
+FROM movies AS m
+JOIN ratings AS r
+  ON m.movie_id = r.movie_id
+JOIN users AS u
+  ON r.user_id = u.user_id
+JOIN watch_history AS w
+  ON u.user_id = w.user_id
+  AND m.movie_id = w.movie_id
+WHERE m.genre = 'Action' AND 
+  u.age > 25 AND
+  r.rating >= 4.0 AND
+  w.watch_minutes > 60;
+
+-- SELECT 
+--   m.movie_name,
+--   m.genre,
+--   u.user_name,
+--   r.rating
+-- FROM watch_history AS w
+-- JOIN movies AS m 
+--   ON w.movie_id = m.movie_id
+-- JOIN users AS u 
+--   ON w.user_id = u.user_id
+-- JOIN ratings AS r 
+--   ON w.movie_id = r.movie_id 
+--   AND w.user_id = r.user_id
+-- WHERE m.genre = 'Action'
+--   AND u.age > 25
+--   AND r.rating >= 4.0
+--   AND w.watch_minutes > 60;
