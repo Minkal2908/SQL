@@ -1,0 +1,24 @@
+-- CREATE DATABASE IF NOT EXISTS sandbox_db; -- access denied 
+
+-- CREATE DATABASE IF NOT EXISTS sandbox db; -- Syntax Error
+-- CREATE DATABASE IF NOT EXISTS sandbox|db; -- Syntax Error
+
+-- CREATE DATABASE IF NOT EXISTS `sandbox db`; -- No Error
+-- CREATE DATABASE IF NOT EXISTS `sandbox|db`; -- No Error
+
+CREATE TABLE student (
+  id INT PRIMARY KEY,
+  name VARCHAR(50),
+  age INT NOT NULL
+);
+
+INSERT INTO student VALUES(1, "Aman", 26);
+INSERT INTO student VALUES(2, "Minkal", 21);
+
+SELECT * FROM student;
+
+SHOW DATABASES;
+
+-- DROP DATABASE IF EXISTS information_schema; -- access denied 
+
+SHOW TABLES;
