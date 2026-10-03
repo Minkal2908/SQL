@@ -1,0 +1,134 @@
+-- -- Computes the average across all rows in the table
+-- SELECT AVG(marks) FROM student;
+
+-- -- Counts the total rows in the entire table
+-- SELECT COUNT(*) FROM student;
+
+
+CREATE TABLE student (
+  rollno INT PRIMARY KEY,
+  name VARCHAR(50),
+  marks INT NOT NULL
+);
+
+INSERT INTO student (rollno, name, marks) VALUES
+(101, 'anil', 78),
+(102, 'bhumika', 93),
+(103, 'chetan', 85),
+(104, 'dhruv', 96),
+(105, 'emanuel', 92),
+(106, 'farah', 82);
+
+SELECT * FROM student;
+
+-- Question:
+--   Get names of all students who scored more than class average.   
+-- Steps to solve: 2 step process
+--   Step 1: Find the avg of class.   
+--   Step 2: Find the names of students with marks > avg.  
+
+-- SELECT name, marks
+-- FROM student
+-- WHERE marks > AVG(marks);
+-- ERROR Invalid use of group function
+
+-- Step 1
+SELECT AVG(marks) AS AVG
+FROM student;
+
+-- STATIC PROCESS which is not good as DB can be changed continously then we have
+-- to calculate avg every time individually and then put that avg here to find out
+-- ans of given ques 
+SELECT name, marks
+FROM student
+WHERE marks > 87.6667;
+
+-- Step 2 -> DYANMIC PROCESS
+SELECT name, marks
+FROM student
+WHERE marks > (
+  SELECT AVG(marks) AS AVG
+  FROM student
+);
+
+-- QUES 2 : Find the names of all students with even roll no 
+
+-- SELECT name
+-- FROM student
+-- WHERE rollno = (
+--   SELECT rollno
+--   FROM student
+--   -- CONSTRAINT even_check CHECK (roolno % 2 = 0) -- ye to constraint hai jo table banate waqt use hota hai yahn to hum select stmt likh rahe hain where clause hin lagega
+--   WHERE rollno % 2 = 0
+-- );
+-- -- ERROR Subquery returns more than 1 row
+
+SELECT name, rollno
+FROM student
+WHERE rollno % 2 = 0;
+
+-- OR -> exact jo ques puch hai bss wahi i.e bss name
+SELECT name
+FROM student
+WHERE rollno % 2 = 0;
+
+-- OR -> by 2 step process / Subquery
+-- STEP 1 -> find all even roll numbers 
+SELECT rollno
+FROM student
+WHERE rollno % 2 = 0;
+
+-- STEP 2 -> find the names of student with those even rollno
+-- SELECT name
+-- FROM student
+-- WHERE rollno = (
+--   SELECT name, rollno
+--   FROM student
+--   WHERE rollno % 2 = 0
+-- );
+-- ERROR Operand should contain 1 column(s)
+
+-- SELECT name
+-- FROM student
+-- WHERE rollno IN (
+--   SELECT name, rollno
+--   FROM student
+--   WHERE rollno % 2 = 0
+-- );
+-- ERROR Operand should contain 1 column(s)
+
+-- SELECT name
+-- FROM student
+-- WHERE rollno IN (
+--   SELECT name
+--   FROM student
+--   WHERE rollno % 2 = 0
+-- );
+-- this will print rollno b/c inside wale query mein humne name select karke bahr rollno se compare kara rahe hain with IN
+-- Because `rollno` is an integer and `name` is a string, comparing `WHERE rollno IN (SELECT name ...)` causes a type mismatch/failure, so that query didn't print any names.
+
+SELECT name
+FROM student
+WHERE rollno IN (
+  SELECT rollno
+  FROM student
+  WHERE rollno % 2 = 0
+);
+
+-- SELECT name, rollno
+-- FROM student
+-- WHERE rollno IN (
+--   SELECT name, rollno 
+--   FROM student
+--   WHERE rollno % 2 = 0
+-- );
+-- ERROR Operand should contain 1 column(s)
+
+SELECT name, rollno
+FROM student
+WHERE rollno IN (
+  SELECT rollno 
+  FROM student
+  WHERE rollno % 2 = 0
+);
+
