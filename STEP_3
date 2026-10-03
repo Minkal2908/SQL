@@ -1,0 +1,13 @@
+CREATE TABLE employee (
+  empID INT PRIMARY KEY,
+  name VARCHAR(50),
+  salary FLOAT NOT NULL
+);
+
+INSERT INTO employee
+VALUES
+(1, "adam", 25000), -- we can also use single quotes 'adam'
+(2, "bob", 30000), 
+(3, "casey", 40000);
+
+SELECT * FROM employee;
